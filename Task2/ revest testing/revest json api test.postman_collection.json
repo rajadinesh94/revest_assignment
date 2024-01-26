@@ -1,0 +1,120 @@
+{
+	"info": {
+		"_postman_id": "50b8a8ca-6dda-4540-85ca-5fac9b2280a9",
+		"name": "revest json api test",
+		"description": "revest json api test, contains definitions for three HTTP requests that are used to interact with a JSON API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "31463262",
+		"_collection_link": "https://blue-meadow-5511.postman.co/workspace/revest~a9508d04-e2d2-448e-a084-002bb1c12039/collection/31463262-50b8a8ca-6dda-4540-85ca-5fac9b2280a9?action=share&source=collection_link&creator=31463262"
+	},
+	"item": [
+		{
+			"name": "Get Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has required fields\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.all.keys(\"userId\", \"id\", \"title\", \"body\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseUrl}}/posts/1",
+				"description": "Get Post: GET\n\n- **Description**:\n    \n- This request is designed to retrieve a post from the API.\n    \n- The URL uses a base URL variable ({{baseUrl}}) and targets the first post (/posts/1)\n    \n- It does not require any additional headers or body content.\n    \n\n**Tests**:\n\n- .Checks if the response status code is 200, indicating a successful request.\n    \n- Validates that the response contains the required fields: userId , id ,title and body"
+			},
+			"response": []
+		},
+		{
+			"name": "Post New Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 (Created)\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response contains post data\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.include.keys(\"title\", \"body\", \"userId\", \"id\");",
+							"    pm.environment.set(\"postId\", jsonData.id); ",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"This is Dinesh\",\n  \"body\": \"Hi Revest\",\n  \"userId\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/posts",
+				"description": "- **Description**:\n- This request is used to create a new post in the API.\n- The request body includes title ,body and userId.\n    \n\n**Tests**\n\n- Ensures the status code is 201 (Created), indicating the post was successfully created.\n- Confirms that the response contains the new post data, including title ,body and userId and an auto-generated id.\n    \n- Stores the `postID` from the response in the environment for later use."
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains updated data\", function () {",
+							"    let responseData = pm.response.json();",
+							"    pm.expect(responseData.title).to.eql(\"This is Dinesh\");",
+							"    pm.expect(responseData.body).to.eql(\"Hi Revest1\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": {{postId}},\n  \"title\": \"This is Dinesh\",\n  \"body\": \"Hi Revest1\",\n  \"userId\": {{userId}}\n}\n\n\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/posts/{{postId}}",
+				"description": "- Description:\n- This request is utilized for updating an existing post.\n- The {{postId}} and {{userId}} are dynamic values that should be replaced with actual IDs.\n    \n- The request body includes the id, title , body and userId.\n    \n\nTests:\n\n- Verifies that the response status code is 200, indicating the update was successful.\n- Checks that the response contains the updated `title` and `body`."
+			},
+			"response": []
+		}
+	]
+}
