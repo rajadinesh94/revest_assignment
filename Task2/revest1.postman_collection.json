@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "393788c6-c7ba-43ed-bfb3-e7f873760638",
+		"name": "revest1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "31463262",
+		"_collection_link": "https://blue-meadow-5511.postman.co/workspace/revest~a9508d04-e2d2-448e-a084-002bb1c12039/collection/31463262-393788c6-c7ba-43ed-bfb3-e7f873760638?action=share&source=collection_link&creator=31463262"
+	},
+	"item": [
+		{
+			"name": "getreq",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has valid JSON structure\", function () {",
+							"    pm.response.to.be.json;",
+							"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");",
+							"",
+							"    pm.test(\"Response has userId, id, title, and body for each post\", function () {",
+							"        pm.response.json().forEach(function (post) {",
+							"            pm.expect(post).to.have.property(\"userId\").that.is.a(\"number\");",
+							"            pm.expect(post).to.have.property(\"id\").that.is.a(\"number\");",
+							"            pm.expect(post).to.have.property(\"title\").that.is.a(\"string\");",
+							"            pm.expect(post).to.have.property(\"body\").that.is.a(\"string\");",
+							"        });",
+							"    });",
+							"",
+							"    pm.test(\"Each post has a unique id\", function () {",
+							"        const postIds = pm.response.json().map(post => post.id);",
+							"        pm.expect(postIds).to.have.lengthOf(new Set(postIds).size);",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseURL}}/posts"
+			},
+			"response": []
+		},
+		{
+			"name": "pstreq",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Response has valid JSON structure for the new post\", function () {",
+							"    pm.response.to.be.json;",
+							"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");",
+							"",
+							"    pm.expect(pm.response.json()).to.have.property(\"userId\");",
+							"    pm.expect(pm.response.json()).to.have.property(\"id\");",
+							"    pm.expect(pm.response.json()).to.have.property(\"title\");",
+							"    pm.expect(pm.response.json()).to.have.property(\"body\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": 1,\n    \"title\": \"New Post Title\",\n    \"body\": \"This is the body of the new post.\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseURL}}{{newPostEndpoint}}"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://jsonplaceholder.typicode.com",
+			"type": "string"
+		},
+		{
+			"key": "newPostEndpoint",
+			"value": "/posts",
+			"type": "string"
+		}
+	]
+}
